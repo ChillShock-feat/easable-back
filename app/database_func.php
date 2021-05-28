@@ -9,5 +9,7 @@ class DBFunction
         $pdo = new PDO($dsn, DBUSER, DBPASSWORD);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
 }

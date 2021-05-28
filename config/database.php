@@ -1,5 +1,5 @@
 <?php
-define('DBUSER', 'root');
-define('DBPASSWORD', 'Ninomiya_820');
-define('DBSERVER', '127.0.0.1');
+define('DBUSER', 'test');
+define('DBPASSWORD', 'Password_820');
+define('DBSERVER', '192.168.56.101');
 define('DBNAME', 'easable_test');
