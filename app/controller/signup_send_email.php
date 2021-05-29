@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__) . '/../model/database_func.php');
 require_once(dirname(__FILE__) . '/../validate/regist_user_validate.php');
 require_once(dirname(__FILE__) . '/../../config/email.php');
+require_once(dirname(__FILE__) . '/../../config/server.php');
 
 session_start();
 
@@ -39,13 +40,13 @@ if (isset($_POST['submit'])) {
         //エラーがない場合、pre_userテーブルにインサート
         if (count($errors) === 0) {
             $urltoken = hash('sha256', uniqid(rand(), 1));
-            $url = "http://192.168.56.101/app/controller/signup.php?urltoken=" . $urltoken;
+            $url = AP_SERVER . "/app/controller/signup.php?urltoken=" . $urltoken;
 
             //登録できたらメッセージを返す
-            $message = $DB_function->DB_regist_user($pdo, $urltoken, $email);
+            $message = $DB_function->DB_regist_pre_user($pdo, $urltoken, $email);
             //メール送信処理
             //mb_send_mail($email, SIGNUP_MAIL_TITLE, SIGNUP_MAIL_SUBJECT, HEADERS);
         }
     }
-    header("Location:http://localhost/easable-app/registration_sample/done.php?url={$url}");
+    header("Location:" . WEB_SERVER . "/registration_sample/done.html?url={$url}");
 }
