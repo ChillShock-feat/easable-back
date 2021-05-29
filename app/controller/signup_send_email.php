@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . '/../model/database_func.php');
 require_once(dirname(__FILE__) . '/../validate/regist_user_validate.php');
+require_once(dirname(__FILE__) . '/../../config/email.php');
 
 session_start();
 
@@ -19,7 +20,6 @@ $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
 
 if (isset($_POST['submit'])) {
-    var_dump('enter');
     //メールアドレス空欄
     if (empty($_POST['email'])) {
         $errors['email'] = 'メールアドレスが未入力です。';
@@ -43,10 +43,9 @@ if (isset($_POST['submit'])) {
 
             //登録できたらメッセージを返す
             $message = $DB_function->DB_regist_user($pdo, $urltoken, $email);
+            //メール送信処理
+            //mb_send_mail($email, SIGNUP_MAIL_TITLE, SIGNUP_MAIL_SUBJECT, HEADERS);
         }
     }
-    header('Location:http://localhost/easable-app/registration_sample/done.html');
+    header("Location:http://localhost/easable-app/registration_sample/done.php?url={$url}");
 }
-
-
-//include 'http://localhost/easable-app/registration_sample/done.html'; //+?foo=1&bar=2

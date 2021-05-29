@@ -42,4 +42,8 @@ class DBFunction
             die();
         }
     }
+
+    public function DB_access_token()
+    {
+    }
 }
