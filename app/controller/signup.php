@@ -2,17 +2,15 @@
 require_once(dirname(__FILE__) . '/../model/database_func.php');
 require_once(dirname(__FILE__) . '/../../config/server.php');
 
-session_start();
-
 //クロスサイトリクエストフォージェリ（CSRF）対策
-$_SESSION['token'] = base64_encode(openssl_random_pseudo_bytes(32));
-$token = $_SESSION['token'];
+// $_SESSION['token'] = base64_encode(openssl_random_pseudo_bytes(32));
+// $token = $_SESSION['token'];
 
 //クリックジャッキング対策
-header('X-FRAME-OPTIONS: SAMEORIGIN');
+// header('X-FRAME-OPTIONS: SAMEORIGIN');
 
 //成功・エラーメッセージの初期化
-$errors = array();
+// $errors = array();
 
 $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();

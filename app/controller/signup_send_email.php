@@ -14,7 +14,7 @@ $token = $_SESSION['token'];
 header('X-FRAME-OPTIONS: SAMEORIGIN');
 
 //エラーメッセージの初期化
-$errors = array();
+// $errors = array();
 
 //DB接続
 $DB_function = new DBFunction;

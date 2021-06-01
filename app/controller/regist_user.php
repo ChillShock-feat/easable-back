@@ -10,13 +10,13 @@ if (isset($_POST['submit'])) {
     $DB_function->DB_regist_user($pdo, $_POST['password'], $_POST['name']);
 
     //セッション変数を全て解除
-    $_SESSION = array();
+    // $_SESSION = array();
     //セッションクッキーの削除
     if (isset($_COOKIE["PHPSESSID"])) {
         setcookie("PHPSESSID", '', time() - 1800, '/');
     }
     //セッションを破棄する
-    session_destroy();
+    // session_destroy();
 
-    header("Location: " . WEB_SERVER . "/registration_sample/regist_OK.html");
+    //header("Location: " . WEB_SERVER . "/registration_sample/regist_OK.html");
 }

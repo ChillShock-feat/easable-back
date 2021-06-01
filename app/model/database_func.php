@@ -63,6 +63,7 @@ class DBFunction
                 $email_array = $stm->fetch();
                 $email = $email_array["email"];
                 $_SESSION['email'] = $email;
+                var_dump($_SESSION['email']);
             } else {
                 $errors['urltoken_timeover'] = "このURLは利用できません。有効期限が過ぎた、もしくはURLが間違えている可能性がございます。恐れ入りますが一度登録し直すようお願いいたします。";
             }
@@ -78,6 +79,8 @@ class DBFunction
     {
         //パスワードのハッシュ化
         $password_hash =  password_hash($password, PASSWORD_DEFAULT);
+
+        var_dump($_SESSION['email']);
 
         //ここでデータベースに登録する
         try {
