@@ -7,16 +7,20 @@ $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
 
 if (isset($_POST['submit'])) {
-    $DB_function->DB_regist_user($pdo, $_POST['password'], $_POST['name']);
+    //登録時のEmail取ってくる用
+    $token = $_POST['urltoken'];
+    $email = $DB_function->DB_index_email($pdo, $_POST['urltoken']);
+
+    $DB_function->DB_regist_user($pdo, $_POST['password'], $_POST['name'], $email);
 
     //セッション変数を全て解除
-    // $_SESSION = array();
+    $_SESSION = array();
     //セッションクッキーの削除
     if (isset($_COOKIE["PHPSESSID"])) {
         setcookie("PHPSESSID", '', time() - 1800, '/');
     }
     //セッションを破棄する
-    // session_destroy();
+    session_destroy();
 
-    //header("Location: " . WEB_SERVER . "/registration_sample/regist_OK.html");
+    header("Location: " . WEB_SERVER . "/registration_sample/regist_OK.php");
 }

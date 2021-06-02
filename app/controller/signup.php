@@ -7,10 +7,10 @@ require_once(dirname(__FILE__) . '/../../config/server.php');
 // $token = $_SESSION['token'];
 
 //クリックジャッキング対策
-// header('X-FRAME-OPTIONS: SAMEORIGIN');
+header('X-FRAME-OPTIONS: SAMEORIGIN');
 
-//成功・エラーメッセージの初期化
-// $errors = array();
+//エラーメッセージの初期化
+$json = array();
 
 $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
@@ -22,10 +22,10 @@ if (empty($_GET)) {
     $urltoken = isset($_GET["urltoken"]) ? $_GET["urltoken"] : NULL;
 
     //メール入力判定
-    if ($urltoken == '') {
-        $errors['urltoken'] = "トークンがありません";
+    if ($urltoken == NULL) {
+        $json['urltoken_error'] = "トークンがありません";
     } else {
-        $DB_function->DB_access_token($pdo, $urltoken);
-        header("Location: " . WEB_SERVER . "/registration_sample/registration.html");
+        $json['result'] = $DB_function->DB_access_token($pdo, $urltoken);
+        echo json_encode($json);
     }
 }

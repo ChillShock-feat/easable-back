@@ -37,7 +37,7 @@ class DBFunction
             $stm->execute();
             $pdo = null;
 
-            return "メールをお送りしました。24時間以内にメールに記載されたURLからご登録下さい。";
+            return 'OK';
         } catch (PDOException $e) {
             print('Error:' . $e->getMessage());
             die();
@@ -47,7 +47,7 @@ class DBFunction
     public function DB_access_token($pdo, $urltoken)
     {
         try {
-            $sql = "SELECT email FROM pre_user 
+            $sql = "SELECT * FROM pre_user 
                     WHERE urltoken=(:urltoken) 
                     AND flag = 0 
                     AND date > now() - interval 24 hour";
@@ -60,42 +60,55 @@ class DBFunction
 
             //24時間以内に仮登録され、本登録されていないトークンの場合
             if ($row_count == 1) {
-                $email_array = $stm->fetch();
-                $email = $email_array["email"];
-                $_SESSION['email'] = $email;
-                var_dump($_SESSION['email']);
+                //データベース接続切断
+                $stm = null;
+                return 'OK';
             } else {
-                $errors['urltoken_timeover'] = "このURLは利用できません。有効期限が過ぎた、もしくはURLが間違えている可能性がございます。恐れ入りますが一度登録し直すようお願いいたします。";
+                return 'error'; //<-- "このURLは利用できません。有効期限が過ぎた、もしくはURLが間違えている可能性がございます。恐れ入りますが一度登録し直すようお願いいたします。";
             }
-            //データベース接続切断
-            $stm = null;
         } catch (PDOException $e) {
             print('Error:' . $e->getMessage());
             die();
         }
     }
 
-    public function DB_regist_user($pdo, $password, $name)
+    public function DB_index_email($pdo, $urltoken)
     {
-        //パスワードのハッシュ化
+        try {
+            $sql = "SELECT email FROM pre_user
+                    WHERE urltoken=(:urltoken)";
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(':urltoken', $urltoken, PDO::PARAM_STR);
+            $stm->execute();
+
+            if ($stm->rowCount() == 1) {
+                $email_array = $stm->fetch();
+
+                return $email_array["email"];
+            }
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
+
+    public function DB_regist_user($pdo, $password, $name, $email)
+    {
         $password_hash =  password_hash($password, PASSWORD_DEFAULT);
 
-        var_dump($_SESSION['email']);
-
-        //ここでデータベースに登録する
         try {
             $sql = "INSERT INTO user (password,name,email,login_status,user_status,created_at,updated_at) 
-                    VALUES (:password_hash,:name,:email,1,0,now(),now())";
+                    VALUES (:password_hash,:name,:email,0,0,now(),now())";
             $stm = $pdo->prepare($sql);
             $stm->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
             $stm->bindValue(':name', $name, PDO::PARAM_STR);
-            $stm->bindValue(':email', $_SESSION['email'], PDO::PARAM_STR);
+            $stm->bindValue(':email', $email, PDO::PARAM_STR);
             $stm->execute();
 
             //pre_userのflagを1にする(トークンの無効化)
-            $sql = "UPDATE pre_user SET flag=1 WEHERE email=:email";
+            $sql = "UPDATE pre_user SET flag=1 WHERE email=:email";
             $stm = $pdo->prepare($sql);
-            $stm->bindValue(':email', $_SESSION['email'], PDO::PARAM_STR);
+            $stm->bindValue(':email', $email, PDO::PARAM_STR);
             $stm->execute();
 
             $stm = null;
