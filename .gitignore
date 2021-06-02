@@ -1,2 +1,3 @@
 /config/database.php
 /config/server.php
+/config/email.php
