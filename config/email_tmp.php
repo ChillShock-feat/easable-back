@@ -5,7 +5,7 @@
 define(
     'HEADERS',
     array(
-        'From' => 'nino.brenpy@gmail.com',
+        'From' => '',
     )
 );
 
