@@ -15,6 +15,7 @@ header('X-FRAME-OPTIONS: SAMEORIGIN');
 
 //エラーメッセージの初期化
 $json = array();
+$json['error'] = '';
 
 //DB接続
 $DB_function = new DBFunction;
@@ -23,7 +24,7 @@ $pdo = $DB_function->DB_connect();
 if (isset($_POST['submit'])) {
     //メールアドレス空欄
     if (empty($_POST['email'])) {
-        $json['email_empty'] = 'メールアドレスが未入力です。';
+        $json['error'] = 'メールアドレスが未入力です。'; //番号に変える
     } else {
         //POSTされたデータを変数に入れる
         $email = isset($_POST['email']) ? $_POST['email'] : NULL;
@@ -34,11 +35,11 @@ if (isset($_POST['submit'])) {
         //すでにメールアドレスが登録されているか確認
         $result = $DB_function->DB_check_user($pdo, $email);
         if (isset($result["id"])) {
-            $json['already_regist'] = "このメールアドレスはすでに利用されております。";
+            $json['error'] = "このメールアドレスはすでに利用されております。"; //番号に変える
         }
 
         //エラーがない場合、pre_userテーブルにインサート
-        if ($json['email_empty'] == NULL && $json['already_regist'] == NULL) {
+        if ($json['error'] == '') {
             $urltoken = hash('sha256', uniqid(rand(), 1));
             $url = WEB_SERVER . "/registration_sample/registration.php?urltoken=" . $urltoken;
 
@@ -46,7 +47,7 @@ if (isset($_POST['submit'])) {
             $json['result'] = $DB_function->DB_regist_pre_user($pdo, $urltoken, $email);
             //メール送信処理
             //mb_send_mail($email, SIGNUP_MAIL_TITLE, SIGNUP_MAIL_SUBJECT, HEADERS);
+            header("Location:" . WEB_SERVER . "/registration_sample/done.php?url={$url}");
         }
     }
-    header("Location:" . WEB_SERVER . "/registration_sample/done.php?url={$url}");
 }
