@@ -23,7 +23,7 @@ if (empty($_GET)) {
 
     //メール入力判定
     if ($urltoken == NULL) {
-        $json['urltoken_error'] = "トークンがありません";
+        $json['error'] = "トークンがありません";
     } else {
         $json['result'] = $DB_function->DB_access_token($pdo, $urltoken);
         echo json_encode($json);

@@ -117,4 +117,20 @@ class DBFunction
             die();
         }
     }
+
+    public function DB_show_database($pdo)
+    {
+        try {
+            $sql = "SHOW DATABASES";
+            $stm = $pdo->prepare($sql);
+            $stm->execute();
+            $json = $stm->fetch(PDO::FETCH_ASSOC);
+            $stm->null;
+
+            return $json;
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
 }

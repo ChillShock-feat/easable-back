@@ -22,5 +22,5 @@ if (isset($_POST['submit'])) {
     //セッションを破棄する
     session_destroy();
 
-    header("Location: " . WEB_SERVER . "/registration_sample/regist_OK.php");
+    header("Location: " . WEB_SERVER . "registration_sample/regist_OK.php");
 }
