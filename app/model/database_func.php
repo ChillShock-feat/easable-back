@@ -117,4 +117,13 @@ class DBFunction
             die();
         }
     }
+
+    public function DB_create_database($pdo, $DB_name)
+    {
+        try {
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
 }
