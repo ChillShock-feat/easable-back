@@ -118,9 +118,18 @@ class DBFunction
         }
     }
 
-    public function DB_show_database($pdo)
+    public function DB_show_database($pdo, $user_id)
     {
         try {
+            //ユーザごとのデータベース名を取得
+            $sql = "SELECT * FROM db
+                    WHERE user_id = :user_id";
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+            $stm->execute();
+            $DB_name = $stm->fetchAll(PDO::FETCH_COLUMN);
+
+            //取得したデータベース名からテーブルデータを取得
             $sql = "SHOW DATABASES";
             $stm = $pdo->prepare($sql);
             $stm->execute();
