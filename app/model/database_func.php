@@ -117,4 +117,31 @@ class DBFunction
             die();
         }
     }
+
+    /**
+     * ログイン処理
+     * @param string $email
+     * @param string $password
+     * @return boolean
+     */
+
+    public function userLogin($pdo, $email, $password)
+    {
+        $sql = "SELECT * FROM user WHERE email=:email";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':email', $email, PDO::PARAM_STR);
+        $stm->execute();
+        if ($stm->rowCount() == 1) {
+            $user = $stm->fetch();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user']['name'] = $user['name'];
+                $_SESSION['user']['email'] = $user['email'];
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }
