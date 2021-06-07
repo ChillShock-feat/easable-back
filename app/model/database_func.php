@@ -136,6 +136,12 @@ class DBFunction
             if (password_verify($password, $user['password'])) {
                 $_SESSION['user']['name'] = $user['name'];
                 $_SESSION['user']['email'] = $user['email'];
+
+                $sql = "UPDATE user SET login_status = 1 WHERE email=:email";
+                $stm = $pdo->prepare($sql);
+                $stm->bindValue(':email', $email, PDO::PARAM_STR);
+                $stm->execute();
+
                 return true;
             } else {
                 return false;
