@@ -150,4 +150,19 @@ class DBFunction
             return false;
         }
     }
+
+    /**
+     * ログアウト処理
+     * @param string $email
+     * @return boolean
+     */
+
+    public function userLogout($pdo, $email)
+    {
+        $sql = "UPDATE user SET login_status = 0 WHERE email=:email";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':email', $email, PDO::PARAM_STR);
+        unset($_SESSION['user']['name'],$_SESSION['user']['email']);
+        return $stm->execute();
+    }
 }
