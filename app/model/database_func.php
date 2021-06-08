@@ -118,16 +118,29 @@ class DBFunction
         }
     }
 
-    public function DB_show_database($pdo, $user_id)
+    public function DB_index_ip_adddress($pdo, $user_id)
     {
         try {
-            //ユーザごとのデータベース名を取得
-            $sql = "SELECT * FROM db
+            $sql = "SELECT ip_address FROM server
                     WHERE user_id = :user_id";
             $stm = $pdo->prepare($sql);
             $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
             $stm->execute();
-            $DB_name = $stm->fetchAll(PDO::FETCH_COLUMN);
+
+            return $users_DB_server = $stm->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
+
+    public function DB_show_database($users_DB_user, $users_DB_passwd, $users_DB_server, $users_DB_name)
+    {
+        try {
+            $dsn = "mysql:host={$users_DB_server};dbname={$users_DB_name};charser=utf8;unix_socket=/tmp/mysql.sock'";
+            $pdo = new PDO($dsn, $users_DB_user, $users_DB_passwd);
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             //取得したデータベース名からテーブルデータを取得
             $sql = "SHOW DATABASES";
