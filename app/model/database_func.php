@@ -9,7 +9,7 @@ class DBFunction
 {
     public function DB_connect()
     {
-        $dsn = "mysql:host=" . DBSERVER . ";dbname=" . DBNAME . ";charser=utf8;unix_socket=/tmp/mysql.sock'";
+        $dsn = "mysql:host=" . DBSERVER . ";dbname=" . DBNAME . ";port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'";
         $pdo = new PDO($dsn, DBUSER, DBPASSWORD);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
