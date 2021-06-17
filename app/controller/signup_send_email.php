@@ -1,11 +1,10 @@
 <?php
 require_once(dirname(__FILE__) . '/../model/database_func.php');
 require_once(dirname(__FILE__) . '/../validate/regist_user_validate.php');
-// require_once(dirname(__FILE__) . '/../../config/email.php');
+require_once(dirname(__FILE__) . '/../../config/email.php');
 require_once(dirname(__FILE__) . '/../../config/server.php');
 
 session_start();
-
 //CSRF対策
 // $_SESSION['token'] = base64_encode(openssl_random_pseudo_bytes(32));
 // $token = $_SESSION['token'];
@@ -41,13 +40,29 @@ if (isset($_POST['submit'])) {
         //エラーがない場合、pre_userテーブルにインサート
         if ($json['error'] == '') {
             $urltoken = hash('sha256', uniqid(rand(), 1));
-            $url = WEB_SERVER . "/registration_sample/registration.php?urltoken=" . $urltoken;
+            $url = WEB_SERVER . "easable-app/registration_sample/registration.php?urltoken=" . $urltoken;
+
+            $SIGNUP_MAIL_SUBJECT =
+            <<< EOM
+            【仮会員登録完了】<br>
+            Easableをご利用いただき誠にありがとうございます。<br>
+            仮登録が完了致しましたので、お知らせ致します。<br>
+            ※もし本メールに心当たりのない場合は、破棄して頂けますようお願い申し上げます。<br>
+            <br>
+            下記URLからアクセスして認証を完了してください。<br>
+            {$url}<br>
+            (有効期限：24時間です)<br>
+            <br>
+            本メールは送信専用です。返信は致しかねますのでご了承ください。<br>
+            <br><br><br>
+            EOM;
 
             //登録できたらOKを返す
             $json['result'] = $DB_function->DB_regist_pre_user($pdo, $urltoken, $email);
             //メール送信処理
-            //mb_send_mail($email, SIGNUP_MAIL_TITLE, SIGNUP_MAIL_SUBJECT, HEADERS);
-            header("Location:" . WEB_SERVER . "/registration_sample/done.php?url={$url}");
+            mb_send_mail($email, SIGNUP_MAIL_TITLE, $SIGNUP_MAIL_SUBJECT, HEADERS);
+
+            header("Location:" . WEB_SERVER . "easable-app/registration_sample/done.php");
         }
     }
 }

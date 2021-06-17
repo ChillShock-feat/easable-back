@@ -9,7 +9,7 @@ class DBFunction
 {
     public function DB_connect()
     {
-        $dsn = "mysql:host=" . DBSERVER . ";dbname=" . DBNAME . ";charser=utf8;unix_socket=/tmp/mysql.sock'";
+        $dsn = "mysql:host=" . DBSERVER . ";dbname=" . DBNAME . ";port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'";
         $pdo = new PDO($dsn, DBUSER, DBPASSWORD);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -116,5 +116,53 @@ class DBFunction
             print('Error:' . $e->getMessage());
             die();
         }
+    }
+
+    /**
+     * ログイン処理
+     * @param string $email
+     * @param string $password
+     * @return boolean
+     */
+
+    public function userLogin($pdo, $email, $password)
+    {
+        $sql = "SELECT * FROM user WHERE email=:email";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':email', $email, PDO::PARAM_STR);
+        $stm->execute();
+        if ($stm->rowCount() == 1) {
+            $user = $stm->fetch();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user']['name'] = $user['name'];
+                $_SESSION['user']['email'] = $user['email'];
+
+                $sql = "UPDATE user SET login_status = 1 WHERE email=:email";
+                $stm = $pdo->prepare($sql);
+                $stm->bindValue(':email', $email, PDO::PARAM_STR);
+                $stm->execute();
+
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * ログアウト処理
+     * @param string $email
+     * @return boolean
+     */
+
+    public function userLogout($pdo, $email)
+    {
+        $sql = "UPDATE user SET login_status = 0 WHERE email=:email";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':email', $email, PDO::PARAM_STR);
+        unset($_SESSION['user']['name'],$_SESSION['user']['email']);
+        return $stm->execute();
     }
 }
