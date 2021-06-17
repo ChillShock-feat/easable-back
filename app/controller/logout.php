@@ -8,5 +8,5 @@ $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
 
 if ($DB_function->userLogout($pdo, $_SESSION['user']['email'])) {
-    header("Location:http://" . WEB_SERVER . "/easable-app/registration_sample/home.php");
+    header("Location:" . WEB_SERVER . "/easable-app/registration_sample/home.php");
 }

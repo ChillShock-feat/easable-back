@@ -9,8 +9,8 @@ $pdo = $DB_function->DB_connect();
 
 if (isset($_POST['submit'])) {
     if($DB_function->userLogin($pdo,$_POST['email'],$_POST['password'])){
-        header("Location:http://" . WEB_SERVER . "/easable-app/registration_sample/home.php");
+        header("Location:" . WEB_SERVER . "/easable-app/registration_sample/home.php");
     }else{
-        header("Location:http://" . WEB_SERVER . "/easable-app/registration_sample/login.php");
+        header("Location:" . WEB_SERVER . "/easable-app/registration_sample/login.php");
     }
 }

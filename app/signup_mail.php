@@ -51,7 +51,7 @@ if (isset($_POST['submit'])) {
         //エラーがない場合、pre_userテーブルにインサート
         if (count($errors) === 0) {
             $urltoken = hash('sha256', uniqid(rand(), 1));
-            $url = "http://localhost:8080/signup.php?urltoken=" . $urltoken;
+            $url = "https://localhost:8080/signup.php?urltoken=" . $urltoken;
             //ここでデータベースに登録する
             try {
                 //例外処理を投げる（スロー）ようにする

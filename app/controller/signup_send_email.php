@@ -5,7 +5,6 @@ require_once(dirname(__FILE__) . '/../../config/email.php');
 require_once(dirname(__FILE__) . '/../../config/server.php');
 
 session_start();
-
 //CSRF対策
 // $_SESSION['token'] = base64_encode(openssl_random_pseudo_bytes(32));
 // $token = $_SESSION['token'];
@@ -51,8 +50,8 @@ if (isset($_POST['submit'])) {
             ※もし本メールに心当たりのない場合は、破棄して頂けますようお願い申し上げます。<br>
             <br>
             下記URLからアクセスして認証を完了してください。<br>
-            <a href="{$url}">{$url}</a><br>
-            (有効期限：{○年○月○日})<br>
+            {$url}<br>
+            (有効期限：24時間です)<br>
             <br>
             本メールは送信専用です。返信は致しかねますのでご了承ください。<br>
             <br><br><br>
