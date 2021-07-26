@@ -26,7 +26,6 @@ class User{
     * @param string $crudHandle
     * @return string $fileName
     */
-
     public function createFileName($crudHandle){
         $baseName = dirname(__FILE__)."/{$crudHandle}test";
         $fileName = $baseName;
@@ -45,7 +44,6 @@ class User{
      * ユーザーの処理の保存先
      * @param string $fileName
      */
-
     public function createPath($fileName){
         //ユーザの処理Path作成
         $uri = $_SERVER['REQUEST_URI'];
@@ -54,24 +52,24 @@ class User{
     }     
 
     /**
-     * Insert Update Delete SelectのSQL文を作成
-     * @param array $keies
-     * @param string $crudHandle
-     * @return string $sql
-     */
+    * Insert Update Delete SelectのSQL文を作成
+    * @param array $keies
+    * @param string $crudHandle
+    * @return string $sql
+    */
     public function createSql($keies,$crudHandle){
         $column= "";
         $data = "";
         if ($crudHandle === "insert") {
             foreach($keies as $value){
                 $column .= "{$value},";
-                $data .= "\$_POST['$value'],";
+                $data .= "{\$_POST['$value']},";
             }
             
             //文字列の末尾を削除
             $column = rtrim($column,',');
             $data = rtrim($data,',');
-            $sql = "\$sql = \"INSERT INTO {$_POST['table_name']} ({$column}) VALUES ({{$data}})\"";
+            $sql = "\$sql = \"INSERT INTO {$_POST['table_name']} ({$column}) VALUES ({$data})\"";
         
         } else if ($crudHandle === "delete") {
             foreach($keies as $value){

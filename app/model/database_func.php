@@ -7,6 +7,7 @@ $pdo = $DB_function->DB_connect();
 
 class DBFunction
 {
+    // DB接続
     public function DB_connect()
     {
         $dsn = "mysql:host=" . DBSERVER . ";dbname=" . DBNAME . ";port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'";
@@ -17,6 +18,7 @@ class DBFunction
         return $pdo;
     }
 
+    // すでに登録されてるか
     public function DB_check_user($pdo, $email)
     {
         $sql = "SELECT id FROM user WHERE email=:email";
@@ -26,6 +28,7 @@ class DBFunction
         return $stm->fetch(PDO::FETCH_ASSOC);
     }
 
+    // 仮登録
     public function DB_regist_pre_user($pdo, $urltoken, $email)
     {
         try {
@@ -72,6 +75,7 @@ class DBFunction
         }
     }
 
+    // メールアドレス取得
     public function DB_index_email($pdo, $urltoken)
     {
         try {
@@ -162,7 +166,43 @@ class DBFunction
         $sql = "UPDATE user SET login_status = 0 WHERE email=:email";
         $stm = $pdo->prepare($sql);
         $stm->bindValue(':email', $email, PDO::PARAM_STR);
-        unset($_SESSION['user']['name'],$_SESSION['user']['email']);
+        unset($_SESSION['user']['name'], $_SESSION['user']['email']);
         return $stm->execute();
+    }
+
+    public function test($pdo, $sql)
+    {
+        $stm = $pdo->prepare($sql);
+        $stm->execute();
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // 各ユーザのDBのユーザ名、パスワードを取得
+    public function DB_index_db_userinfo($pdo, $user_id)
+    {
+        try {
+            $sql = "SELECT db_username, db_password FROM db
+                    WHERE user_id=:userid";
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+            $stm->execute();
+
+            if ($stm->rowCount() == 1) {
+                $user_info = $stm->fetch();
+
+                return $user_info;
+            }
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
+
+    public function DB_create_server($pdo)
+    {
+    }
+
+    public function DB_create_function($pdo)
+    {
     }
 }
