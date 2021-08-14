@@ -69,7 +69,7 @@ class User{
             //文字列の末尾を削除
             $column = rtrim($column,',');
             $data = rtrim($data,',');
-            $sql = "\$sql = \"INSERT INTO {$_POST['table_name']} ({$column}) VALUES ({$data})\"";
+            $sql = "\"INSERT INTO {$_POST['table_name']} ({$column}) VALUES ({$data})\"";
         
         } else if ($crudHandle === "delete") {
             foreach($keies as $value){
@@ -79,9 +79,9 @@ class User{
             //文字列の末尾を削除
             $column = rtrim($column,',');
             if($column !== ""){
-                $sql = "\$sql = \"DELETE FROM {$_POST['table_name']} WHERE $column\"";
+                $sql = "\"DELETE FROM {$_POST['table_name']} WHERE $column\"";
             }else{
-                $sql = "\$sql = \"DELETE FROM {$_POST['table_name']}\"";
+                $sql = "\"DELETE FROM {$_POST['table_name']}\"";
             }
         
         } else if ($crudHandle === "update") {
@@ -91,7 +91,7 @@ class User{
             
             //文字列の末尾を削除
             $column = rtrim($column,',');
-            $sql = "\$sql = \"UPDATE {$_POST['table_name']} SET $column\"";
+            $sql = "\"UPDATE {$_POST['table_name']} SET $column\"";
         } else if ($crudHandle === "select") {
             foreach($keies as $value){
                 $column .= "{$value},";
@@ -100,7 +100,7 @@ class User{
             //文字列の末尾を削除
             $column = rtrim($column,',');
             $data = rtrim($data,',');
-            $sql = "\$sql = \"SELECT $column FROM {$_POST['table_name']}\"";
+            $sql = "\"SELECT $column FROM {$_POST['table_name']}\"";
         }
 
         return $sql;

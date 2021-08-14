@@ -7,7 +7,7 @@ $dsn = "mysql:host=;dbname=;port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'"
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $input_parameters=NULL;
-        ;
+        "INSERT INTO  (password) VALUES ({$_POST['password']})";
         $stm = $pdo->prepare($sql);
         $result = $stm->execute($input_parameters);
         return $result;
@@ -16,7 +16,7 @@ $dsn = "mysql:host=;dbname=;port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'"
     $data = [];
 
     // $dataに送るデータを詰めます。
-    $data['select'] = "SELECT id FROM user";
+    $data['insert'] = "INSERT INTO  (password) VALUES ({$_POST['password']})";
     // $data['num'] = 10;
 
     // 送信データをURLエンコード。

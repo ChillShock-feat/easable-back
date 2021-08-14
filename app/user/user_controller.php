@@ -1,5 +1,6 @@
 <?php
 require_once ("user.php");
+require_once(dirname(__FILE__) . '/../model/database_func.php');
 $path = "./example/user1/";
 $userHandle = new User();
 
@@ -13,32 +14,37 @@ list($keies,$crudHandle) = $userHandle->getKeyCrud($_POST);
 
 $data['sql'] = $userHandle->createSql($keies,$crudHandle);
 
+$sql = $data['sql'];
+
+$db_user = "";
+$db_pass = "";
+$db_name = "";
+$db_server = "";
+
 $function_file = <<<EOM
 <?php
-// 文字コード設定
+    // 文字コード設定
     header('Content-Type: text/html; charset=UTF-8');
+    //CROS対策
+    header('Access-Control-Allow-Origin: *');
     
-\$dsn = "mysql:host={$db_server};dbname={$db_name};port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'";
-        \$pdo = new PDO(\$dsn, \$db_user, \$db_password);
-        \$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        \$input_parameters=NULL;
-        $sql;
-        \$stm = \$pdo->prepare(\$sql);
-        \$result = \$stm->execute(\$input_parameters);
-        return \$result;
+    \$dsn = "mysql:host=$db_server;dbname=$db_name;port=3306;charser=utf8;unix_socket=/tmp/mysql.sock'";
 
     \$url = 'https://back.easable.jp/easable-back/app/user/api.php';
     \$data = [];
 
+    // ユーザごとのデータベース設定を追加  
+    \$data['dsn'] = \$dsn;
+    \$data['db_user'] = '$db_user';
+    \$data['db_pass'] = '$db_pass';
+
     // \$dataに送るデータを詰めます。
-    \$data['select'] = "SELECT id FROM user";
-    // \$data['num'] = 10;
+    \$data['$crudHandle'] = $sql;
 
     // 送信データをURLエンコード。
     \$data = http_build_query(\$data, "", "&");
 
-    // これを指定しないと動かない？
+    // これを指定しないと動かない
     \$header = [
         "Content-Type: application/x-www-form-urlencoded",
         "Content-Length: ".strlen(\$data)
@@ -47,7 +53,7 @@ $function_file = <<<EOM
     \$options =[
     'http' => [
         'method' => 'POST',
-        'header' => implode("\r\n", \$header),
+        'header' => implode("\\r\\n", \$header),
         'content' => \$data
     ]
     ];
@@ -56,12 +62,7 @@ $function_file = <<<EOM
 
     \$data = file_get_contents(\$url, false, \$context);
 
-    \$data = json_decode(\$data);
-
-    if(\$data->status == "200") {
-        print json_encode(\$data, JSON_PRETTY_PRINT);    
-    }
-        
+    echo \$data;        
 EOM;
 
 $fileName = $userHandle->createFileName($crudHandle);
