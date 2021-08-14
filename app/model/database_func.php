@@ -162,7 +162,18 @@ class DBFunction
         $sql = "UPDATE user SET login_status = 0 WHERE email=:email";
         $stm = $pdo->prepare($sql);
         $stm->bindValue(':email', $email, PDO::PARAM_STR);
-        unset($_SESSION['user']['name'],$_SESSION['user']['email']);
+        unset($_SESSION['user']['name'], $_SESSION['user']['email']);
+        return $stm->execute();
+    }
+
+    public function DB_createProject($pdo, $user_id, $project_name)
+    {
+        $sql = "INSERT INTO project (user_id,project_name,created_at,updated_at) 
+                    VALUES (:user_id,:project_name,now(),now())";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+        $stm->bindValue(':project_name', $project_name, PDO::PARAM_STR);
+        // $stm->execute();
         return $stm->execute();
     }
 }
