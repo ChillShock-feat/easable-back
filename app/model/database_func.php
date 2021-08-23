@@ -136,6 +136,7 @@ class DBFunction
             if (password_verify($password, $user['password'])) {
                 $_SESSION['user']['name'] = $user['name'];
                 $_SESSION['user']['email'] = $user['email'];
+                $_SESSION['user']['id'] = $user['id'];
 
                 $sql = "UPDATE user SET login_status = 1 WHERE email=:email";
                 $stm = $pdo->prepare($sql);

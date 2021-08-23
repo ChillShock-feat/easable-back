@@ -8,7 +8,8 @@ $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
 
 if (isset($_POST['submit'])) {
-    if ($DB_function->userLogin($pdo, $_POST['email'], $_POST['password'])) {
+    // FIX : 第二引数効率悪そうやから考える
+    if ($DB_function->DB_createProject($pdo, $_SESSION['user']['email'], $_POST['project_name'])) {
         header("Location:" . WEB_SERVER . "/easable-app/success.php");
     } else {
         header("Location:" . WEB_SERVER . "/easable-app/create_project.php");

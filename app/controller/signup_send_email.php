@@ -43,7 +43,7 @@ if (isset($_POST['submit'])) {
             $url = WEB_SERVER . "easable-app/registration_sample/registration.php?urltoken=" . $urltoken;
 
             $SIGNUP_MAIL_SUBJECT =
-            <<< EOM
+                <<< EOM
             【仮会員登録完了】<br>
             Easableをご利用いただき誠にありがとうございます。<br>
             仮登録が完了致しましたので、お知らせ致します。<br>
@@ -62,7 +62,7 @@ if (isset($_POST['submit'])) {
             //メール送信処理
             mb_send_mail($email, SIGNUP_MAIL_TITLE, $SIGNUP_MAIL_SUBJECT, HEADERS);
 
-            header("Location:" . WEB_SERVER . "easable-app/registration_sample/done.php");
+            header("Location:" . WEB_SERVER . "/easable-app/registration_sample/done.php" . $url);
         }
     }
 }
