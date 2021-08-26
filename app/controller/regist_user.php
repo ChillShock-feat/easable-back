@@ -22,5 +22,5 @@ if (isset($_POST['submit'])) {
     //セッションを破棄する
     session_destroy();
 
-    header("Location:" . WEB_SERVER . "/easable-app/registration_sample/regist_OK.php");
+    header("Location:" . WEB_SERVER . "/easable-app/registed_user.php");
 }

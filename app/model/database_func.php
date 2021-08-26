@@ -169,12 +169,28 @@ class DBFunction
 
     public function DB_createProject($pdo, $user_id, $project_name)
     {
-        $sql = "INSERT INTO project (user_id,project_name,created_at,updated_at) 
-                    VALUES (:user_id,:project_name,now(),now())";
-        $stm = $pdo->prepare($sql);
-        $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-        $stm->bindValue(':project_name', $project_name, PDO::PARAM_STR);
-        // $stm->execute();
-        return $stm->execute();
+        try {
+            $sql = "INSERT INTO project (user_id,project_name) 
+                        VALUES (:user_id,:project_name)";
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+            $stm->bindValue(':project_name', $project_name, PDO::PARAM_STR);
+            // $stm->execute();
+            return $stm->execute();
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
+    }
+
+    public function DB_createServer($pdo, $user_id, $server_name)
+    {
+        // 必要な情報の取得
+
+        // ユーザ用のサーバにdocker-composeする
+    }
+
+    public function DB_indexProjectname($pdo, $user_id)
+    {
     }
 }
