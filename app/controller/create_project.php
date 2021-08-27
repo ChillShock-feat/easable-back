@@ -13,7 +13,7 @@ if (isset($_POST['submit'])) {
     // FIX : 第二引数効率悪そうやから考える
     if ($DB_function->DB_createProject($pdo, $_SESSION['user']['id'], $_POST['project_name'])) {
         // サーバを立てる
-        $url = 'https://back.easable.jp/easable-back/info.php';
+        $url = 'https://www.easable.jp/easable-app/docker-compose/create-bash.php';
 
         // POSTデータ
         $data = array(
