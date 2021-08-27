@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) {
 
         $context = stream_context_create($options);
 
-        // file_get_contents($url, false, $context);
+        file_get_contents($url, false, $context);
 
         header("Location:" . WEB_SERVER . "/easable-app/success.php");
     } else {

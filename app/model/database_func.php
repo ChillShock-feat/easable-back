@@ -171,7 +171,7 @@ class DBFunction
     {
         try {
             $sql = "INSERT INTO project (user_id,project_name) 
-                        VALUES (:user_id,:project_name)";
+                    VALUES (:user_id,:project_name)";
             $stm = $pdo->prepare($sql);
             $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
             $stm->bindValue(':project_name', $project_name, PDO::PARAM_STR);
@@ -185,9 +185,59 @@ class DBFunction
 
     public function DB_createServer($pdo, $user_id, $server_name)
     {
-        // 必要な情報の取得
+        try {
+            // 必要な情報の取得
+            $sql = "SELECT port FROM server
+                    ORDER BY port DESC
+                    LIMIT 1";
+            $stm = $pdo->prepare($sql);
+            $port = $stm->execute();
+            $port += 1;
 
-        // ユーザ用のサーバにdocker-composeする
+            // ユーザ用のサーバにdocker-composeする
+            // 文字コード設定
+            header('Content-Type: text/html; charset=UTF-8');
+            //CROS対策
+            header('Access-Control-Allow-Origin: *');
+
+            $url = 'https://chillshock.easable.jp/easable/docker-compose/create-bash.php';
+
+            // POSTデータ
+            $data = array(
+                "port" => $port,
+                "server_name" => $server_name,
+            );
+            $data = http_build_query($data, "", "&");
+            // これがないと動かない
+            $header = [
+                "Content-Type: application/x-www-form-urlencoded",
+                "Content-Length: " . strlen($data)
+            ];
+
+            // 送信の準備(ストリームを作る)
+            $options = [
+                'http' => [
+                    'method' => 'POST',
+                    'header' => implode("\r\n", $header),
+                    'content' => $data
+                ],
+            ];
+
+            $context = stream_context_create($options);
+            // ユーザ用のサーバにコンテナを立てにいく
+            file_get_contents($url, false, $context);
+
+            // 作成したサーバの情報を登録する
+            $sql = "INSERT INTO server (user_id,server_name,port)
+                    VALUES (:user_id,:server_name,:port)";
+            $stm = $pdo->prepare($sql);
+            $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+            $stm->bindValue(':server_name', $server_name, PDO::PARAM_STR);
+            $stm->bindValue(':port', $port, PDO::PARAM_STR);
+        } catch (PDOException $e) {
+            print('Error:' . $e->getMessage());
+            die();
+        }
     }
 
     public function DB_indexProjectname($pdo, $user_id)
