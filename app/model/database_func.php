@@ -1,6 +1,13 @@
 <?php
 require_once(dirname(__FILE__) . '/../../config/database.php');
 
+// ユーザ用のサーバにdocker-composeする
+// 文字コード設定
+header('Content-Type: text/html; charset=UTF-8');
+//CROS対策
+header('Access-Control-Allow-Origin: *');
+
+
 //DB接続
 $DB_function = new DBFunction;
 $pdo = $DB_function->DB_connect();
@@ -183,7 +190,7 @@ class DBFunction
         }
     }
 
-    public function DB_createServer($pdo, $user_id, $server_name)
+    public function DB_createServer($pdo, $server_name, $project_id,$user_id)
     {
         try {
             // 必要な情報の取得
@@ -191,21 +198,21 @@ class DBFunction
                     ORDER BY port DESC
                     LIMIT 1";
             $stm = $pdo->prepare($sql);
-            $port = $stm->execute();
-            $port += 1;
+            $stm->execute();
+            $port_array = $stm->fetch(PDO::FETCH_ASSOC);
+            $port = $port_array['port'] + 1;
 
-            // ユーザ用のサーバにdocker-composeする
-            // 文字コード設定
-            header('Content-Type: text/html; charset=UTF-8');
-            //CROS対策
-            header('Access-Control-Allow-Origin: *');
+            $project = $this->getProject($pdo,$project_id);
+            $project_name = $project['project_name'];
 
-            $url = 'https://chillshock.easable.jp/easable/docker-compose/create-bash.php';
+            $url = 'http://chillshock.easable.jp:8888/create_container.php';
 
             // POSTデータ
             $data = array(
+                "user_id" => $user_id,
                 "port" => $port,
                 "server_name" => $server_name,
+                "project_name" => $project_name
             );
             $data = http_build_query($data, "", "&");
             // これがないと動かない
@@ -227,13 +234,16 @@ class DBFunction
             // ユーザ用のサーバにコンテナを立てにいく
             file_get_contents($url, false, $context);
 
-            // 作成したサーバの情報を登録する
-            $sql = "INSERT INTO server (user_id,server_name,port)
-                    VALUES (:user_id,:server_name,:port)";
-            $stm = $pdo->prepare($sql);
-            $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-            $stm->bindValue(':server_name', $server_name, PDO::PARAM_STR);
-            $stm->bindValue(':port', $port, PDO::PARAM_STR);
+            // // 作成したサーバの情報を登録する
+            // $sql = "INSERT INTO server (project_id,server_name,port)
+            //         VALUES (:project_id,:server_name,:port)";
+
+            // $stm = $pdo->prepare($sql);
+            // // $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+            // $stm->bindValue(':server_name', $server_name, PDO::PARAM_STR);
+            // $stm->bindValue(':port', $port, PDO::PARAM_STR);
+            // $stm->bindValue(':project_id', $project_id, PDO::PARAM_STR);
+            // return $stm->execute();
         } catch (PDOException $e) {
             print('Error:' . $e->getMessage());
             die();
@@ -242,5 +252,24 @@ class DBFunction
 
     public function DB_indexProjectname($pdo, $user_id)
     {
+    }
+
+
+    public function selectProject($pdo, $user_id, $project_name)
+    {
+        $sql = "SELECT id FROM project WHERE user_id=:user_id and project_name=:project_name";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+        $stm->bindValue(':project_name', $project_name, PDO::PARAM_STR);
+        $stm->execute();
+        return $stm->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getProject($pdo,$project_id){
+        $sql = "SELECT project_name FROM project WHERE id=:project_id";
+        $stm = $pdo->prepare($sql);
+        $stm->bindValue(':project_id', $project_id, PDO::PARAM_STR);
+        $stm->execute();
+        return $stm->fetch(PDO::FETCH_ASSOC);
     }
 }

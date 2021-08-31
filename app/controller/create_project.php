@@ -12,34 +12,37 @@ var_dump($_SESSION['user']['email']);
 if (isset($_POST['submit'])) {
     // FIX : 第二引数効率悪そうやから考える
     if ($DB_function->DB_createProject($pdo, $_SESSION['user']['id'], $_POST['project_name'])) {
-        // サーバを立てる
-        $url = 'https://www.easable.jp/easable-app/docker-compose/create-bash.php';
+        $project_id = $DB_function->selectProject($pdo, $_SESSION['user']['id'], $_POST['server_name']);
+        // if ($DB_function->DB_createServer($pdo, $_SESSION['user']['id'], $_POST['project_name'])) {
+        // }
+        // // サーバを立てる
+        // $url = 'https://www.easable.jp/easable-app/docker-compose/create-bash.php';
 
-        // POSTデータ
-        $data = array(
-            "user_id" => $_SESSION['user']['id'],
-            "server_name" => $_POST['server_name'],
-            "project_name" => $_POST['project_name'],
-        );
-        $data = http_build_query($data, "", "&");
+        // // POSTデータ
+        // $data = array(
+        //     "user_id" => $_SESSION['user']['id'],
+        //     "server_name" => $_POST['server_name'],
+        //     "project_name" => $_POST['project_name'],
+        // );
+        // $data = http_build_query($data, "", "&");
 
-        $header = [
-            "Content-Type: application/x-www-form-urlencoded",
-            "Content-Length: " . strlen($data)
-        ];
+        // $header = [
+        //     "Content-Type: application/x-www-form-urlencoded",
+        //     "Content-Length: " . strlen($data)
+        // ];
 
-        // 送信の準備(ストリームを作る)
-        $options = [
-            'http' => [
-                'method' => 'POST',
-                'header' => implode("\r\n", $header),
-                'content' => $data
-            ],
-        ];
+        // // 送信の準備(ストリームを作る)
+        // $options = [
+        //     'http' => [
+        //         'method' => 'POST',
+        //         'header' => implode("\r\n", $header),
+        //         'content' => $data
+        //     ],
+        // ];
 
-        $context = stream_context_create($options);
+        // $context = stream_context_create($options);
 
-        file_get_contents($url, false, $context);
+        // file_get_contents($url, false, $context);
 
         header("Location:" . WEB_SERVER . "/easable-app/success.php");
     } else {
